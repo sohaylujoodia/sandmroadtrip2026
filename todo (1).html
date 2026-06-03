@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>West Coast Run · To Do List</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:#0a0a08;color:#f0e8d6;font-family:'Barlow',sans-serif;font-weight:300;min-height:100vh}
+
+/* BG gradient */
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(244,96,12,0.07) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(245,166,35,0.05) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+/* Grain */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.018;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.page{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:clamp(40px,6vw,70px) clamp(16px,5vw,40px) 60px}
+
+/* HEADER */
+.back-link{display:inline-flex;align-items:center;gap:8px;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:4px;color:#8a8070;text-decoration:none;margin-bottom:32px;transition:color .2s}
+.back-link:hover{color:#f4600c}
+.back-arrow{font-size:14px}
+
+.page-eyebrow{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:6px;color:#f4600c;margin-bottom:10px}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,10vw,90px);line-height:.9;background:linear-gradient(135deg,#f0e8d6 30%,#f5a623 65%,#f4600c 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.page-sub{font-family:'DM Serif Display',serif;font-style:italic;color:#8a8070;font-size:clamp(14px,2.5vw,18px);margin-bottom:36px}
+
+/* PROGRESS BAR */
+.progress-wrap{margin-bottom:40px}
+.progress-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.progress-text{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:#8a8070}
+.progress-count{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#f4600c}
+.progress-bar{height:3px;background:rgba(244,96,12,0.15);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(to right,#f4600c,#f5a623);border-radius:2px;transition:width .4s cubic-bezier(.4,0,.2,1);width:0%}
+
+/* SECTIONS */
+.todo-section{margin-bottom:32px}
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(244,96,12,0.15)}
+.section-icon{font-size:18px}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#f0e8d6}
+.section-count{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:#8a8070;margin-left:auto}
+
+/* TODO ITEMS */
+.todo-item{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:clamp(10px,2vw,13px) clamp(12px,2vw,16px);
+  border:1px solid rgba(244,96,12,0.08);
+  background:rgba(12,11,8,0.7);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  margin-bottom:3px;
+  cursor:pointer;
+  transition:border-color .2s,background .2s,opacity .3s;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+.todo-item:hover{border-color:rgba(244,96,12,0.25);background:rgba(16,14,10,0.85)}
+.todo-item.done{opacity:0.45}
+.todo-item.done .todo-label{text-decoration:line-through;color:#6a6060}
+
+/* Custom checkbox */
+.todo-check{
+  width:20px;height:20px;flex-shrink:0;
+  border:1.5px solid rgba(244,96,12,0.4);
+  border-radius:2px;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s,border-color .2s;
+  margin-top:1px;
+}
+.todo-item.done .todo-check{background:#f4600c;border-color:#f4600c}
+.check-tick{
+  width:11px;height:8px;
+  border-left:2px solid #fff;border-bottom:2px solid #fff;
+  transform:rotate(-45deg) translateY(-1px);
+  opacity:0;transition:opacity .15s;
+}
+.todo-item.done .check-tick{opacity:1}
+
+.todo-label{font-size:clamp(13px,2vw,14px);line-height:1.5;color:#c8c0b0;transition:color .2s,text-decoration .2s;flex:1}
+.todo-label strong{color:#f0e8d6;font-weight:500}
+
+/* Completed flights special style */
+.todo-item.completed-flight{opacity:0.5;cursor:default}
+.todo-item.completed-flight .todo-check{background:#2d8a4e;border-color:#2d8a4e}
+.todo-item.completed-flight .todo-label{text-decoration:line-through;color:#6a6060}
+.todo-item.completed-flight:hover{border-color:rgba(244,96,12,0.08);background:rgba(12,11,8,0.7)}
+
+/* Urgency badge */
+.urgent{display:inline-block;background:rgba(244,96,12,0.15);border:1px solid rgba(244,96,12,0.35);color:#f4600c;font-family:'Bebas Neue',sans-serif;font-size:9px;letter-spacing:2px;padding:1px 7px;border-radius:1px;margin-left:8px;vertical-align:middle;flex-shrink:0}
+
+/* FOOTER */
+.page-footer{margin-top:48px;padding-top:24px;border-top:1px solid rgba(244,96,12,0.12);display:flex;align-items:center;justify-content:space-between;flex-wrap:gap;gap:12px}
+.footer-note{font-family:'DM Serif Display',serif;font-style:italic;color:#8a8070;font-size:13px}
+.reset-btn{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:3px;color:#6a6060;background:none;border:1px solid rgba(255,255,255,0.08);padding:6px 14px;cursor:pointer;transition:color .2s,border-color .2s}
+.reset-btn:hover{color:#f4600c;border-color:rgba(244,96,12,0.3)}
+
+/* Loading state */
+.loading{text-align:center;padding:60px 20px;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:4px;color:#8a8070}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="index.html"><span class="back-arrow">←</span> Itinerary</a>
+  <a class="back-link" href="bookings.html" style="margin-left:16px">Bookings</a>
+
+  <p class="page-eyebrow">Jun 26 — Jul 4 · 2026</p>
+  <h1 class="page-title">To Do<br>List</h1>
+  <p class="page-sub">West Coast Run · tap to check off</p>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span class="progress-text">Completed</span>
+      <span class="progress-count" id="progress-count">0 / 0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <div id="todo-list">
+    <div class="loading">Loading...</div>
+  </div>
+
+  <div class="page-footer">
+    <span class="footer-note">Tap any item to mark it done</span>
+    <button class="reset-btn" id="reset-btn">Reset All</button>
+  </div>
+
+</div>
+
+<script>
+const SECTIONS = [
+  {
+    icon:'✈️', title:'Flights',
+    items:[
+      {id:'f1', label:'<strong>Outbound:</strong> Delta DL1732, JFK → SFO, Fri Jun 26 21:15', done:true, locked:true},
+      {id:'f2', label:'<strong>Return:</strong> AA2957/1942, LAS → CLT → LGA, Sat Jul 4 07:00 → 17:37 (67k Avios)', done:true, locked:true},
+    ]
+  },
+  {
+    icon:'🏨', title:'Accommodation',
+    items:[
+      {id:'h1', label:'<strong>San Francisco</strong> — Fri 26 Jun · Hotel Nova SFO · Conf# 6257372921 · Booking.com ✅', done:true},
+      {id:'h2', label:'<strong>Yosemite area</strong> — Sat 27 Jun · Miners Inn, Mariposa · Conf# 5218830327 · Booking.com ✅', done:true},
+      {id:'h3', label:'<strong>Sequoia</strong> — Sun 28 Jun · Comfort Inn & Suites Sequoia · Amex Travel Ref ZO-AX1053-71008 · NON-REFUNDABLE ✅', done:true},
+      {id:'h4', label:'<strong>Death Valley</strong> — Mon 29 Jun · The Ranch at Death Valley · Amex Ref ZO-AX1052-02107 ✅', done:true},
+      {id:'h5', label:'<strong>Zion</strong> — Tue 30 Jun · Zion Canyon Lodge, Springdale · Amex Ref ZO-AX1053-71171 ✅', done:true},
+      {id:'h6', label:'<strong>Grand Canyon</strong> — Wed 1 Jul · Maswik Lodge Inside the Park · Expedia #73463309770291 · Cancel by 29 Jun 16:00 ✅', done:true},
+      {id:'h7', label:'<strong>Las Vegas</strong> — Thu 2 Jul–Sat 4 Jul · Conrad Las Vegas at Resorts World · Revolut Booking ID kA1n2Eiyg · Cancel by 29 Jun 10:00 ✅', done:true},
+      {id:'h8', label:'<strong>Helicopter Tour</strong> — Thu 2 Jul 07:55 · Canyon Classic · Papillon · Ref GYGKBGA99RNQ · GetYourGuide (10% Amex discount applied) ✅', done:true},
+    ]
+  },
+  {
+    icon:'🚗', title:'Car Rental',
+    items:[
+      {id:'c1', label:'Enrol Amex Platinum (US) in <strong>Hertz Gold Plus Five Star</strong> status'},
+      {id:'c2', label:'Enrol Amex Platinum (US) in <strong>National Emerald Club Executive</strong> status'},
+      {id:'c3', label:'Enrol Amex Platinum (US) in <strong>Avis Preferred Plus</strong> status'},
+      {id:'c4', label:'Book <strong>mid-size SUV minimum</strong> — pick up SFO, drop off LAS, using enrolled status number'},
+    ]
+  },
+  {
+    icon:'🎫', title:'Permits & Passes',
+    items:[
+      {id:'p1', label:'Buy <strong>America the Beautiful Pass</strong> — $80 at store.usgs.gov. Covers all 6 parks', urgent:true},
+      {id:'p2', label:'Set reminder for <strong>Yosemite timed entry permit</strong> (~May 29) — recreation.gov, goes fast', urgent:true},
+      {id:'p3', label:'Check <strong>Angels Landing lottery</strong> on recreation.gov for Jul 1 — may already be open', urgent:true},
+    ]
+  },
+  {
+    icon:'📋', title:'Admin',
+    items:[
+      {id:'a1', label:'Check <strong>passport expiry</strong> for both — US requires 6 months validity beyond travel dates'},
+      {id:'a2', label:'Check <strong>travel insurance</strong> covers US road trip including hire car and medical'},
+      {id:'a3', label:'Notify <strong>bank and credit cards</strong> of travel dates and US destination'},
+      {id:'a4', label:'Check <strong>Amex FHR</strong> for Waldorf Astoria Las Vegas — free breakfast + $100 credit if available'},
+      {id:'a5', label:'Download <strong>offline maps</strong> for all park areas — Google Maps or Maps.me. No signal in parks'},
+      {id:'a6', label:'Set up <strong>international roaming</strong> or buy US SIM / eSIM before departure'},
+      {id:'a7', label:'Book <strong>July 4th dinner</strong> in Las Vegas — restaurants fill up weeks ahead'},
+    ]
+  },
+  {
+    icon:'🎒', title:'Packing',
+    items:[
+      {id:'pk1', label:'<strong>SPF 50+ sunscreen</strong> — reapply every 2 hours in Death Valley and Grand Canyon'},
+      {id:'pk2', label:'<strong>Layers</strong> for alpine cold — Sequoia nights drop to 40–50°F in July'},
+      {id:'pk3', label:'<strong>Good walking shoes</strong> — trail-ready, closed toe for Mist Trail, Angels Landing, Bright Angel'},
+      {id:'pk4', label:'<strong>Large refillable water bottles</strong> — minimum 2 litres per person in the car at all times'},
+      {id:'pk5', label:'<strong>Portable power bank</strong> — phone dies fast on camera and maps in remote areas'},
+      {id:'pk6', label:'<strong>Head torch / flashlight</strong> — for stargazing at Death Valley after dark'},
+      {id:'pk7', label:'<strong>Light rain layer</strong> — Zion can get afternoon thunderstorms in July'},
+    ]
+  },
+];
+
+// ── STORAGE HELPERS ──
+async function loadState() {
+  try {
+    const result = await window.storage.get('todo-state', true);
+    return result ? JSON.parse(result.value) : {};
+  } catch(e) {
+    return {};
+  }
+}
+
+async function saveState(state) {
+  try {
+    await window.storage.set('todo-state', JSON.stringify(state), true);
+  } catch(e) {
+    // fallback to localStorage if storage API unavailable
+    try { localStorage.setItem('todo-state', JSON.stringify(state)); } catch(e2){}
+  }
+}
+
+function loadLocalState() {
+  try {
+    const s = localStorage.getItem('todo-state');
+    return s ? JSON.parse(s) : {};
+  } catch(e){ return {}; }
+}
+
+// ── RENDER ──
+let state = {};
+
+function render(savedState) {
+  state = savedState || {};
+
+  // Seed locked items as always done
+  SECTIONS.forEach(sec => sec.items.forEach(item => {
+    if(item.locked) state[item.id] = true;
+  }));
+
+  const container = document.getElementById('todo-list');
+  container.innerHTML = '';
+
+  SECTIONS.forEach(sec => {
+    const secEl = document.createElement('div');
+    secEl.className = 'todo-section';
+
+    const doneCount = sec.items.filter(it => state[it.id]).length;
+
+    secEl.innerHTML = `
+      <div class="section-header">
+        <span class="section-icon">${sec.icon}</span>
+        <span class="section-title">${sec.title}</span>
+        <span class="section-count">${doneCount}/${sec.items.length}</span>
+      </div>
+    `;
+
+    sec.items.forEach(item => {
+      const done = !!state[item.id];
+      const itemEl = document.createElement('div');
+      itemEl.className = 'todo-item' + (done ? ' done' : '') + (item.locked ? ' completed-flight' : '');
+      itemEl.dataset.id = item.id;
+
+      itemEl.innerHTML = `
+        <div class="todo-check"><div class="check-tick"></div></div>
+        <span class="todo-label">${item.label}${item.urgent && !done ? '<span class="urgent">DO NOW</span>' : ''}</span>
+      `;
+
+      if(!item.locked) {
+        itemEl.addEventListener('click', () => toggle(item.id));
+      }
+
+      secEl.appendChild(itemEl);
+    });
+
+    container.appendChild(secEl);
+  });
+
+  updateProgress();
+}
+
+function toggle(id) {
+  state[id] = !state[id];
+
+  const el = document.querySelector(`[data-id="${id}"]`);
+  if(el){
+    el.classList.toggle('done', state[id]);
+    // update urgent badge
+    const label = el.querySelector('.todo-label');
+    const existingBadge = label.querySelector('.urgent');
+    if(state[id] && existingBadge) existingBadge.remove();
+
+    // Update section count
+    const secEl = el.closest('.todo-section');
+    const secItems = secEl.querySelectorAll('.todo-item:not(.completed-flight)');
+    const secDone = secEl.querySelectorAll('.todo-item.done:not(.completed-flight)');
+    // recalculate including locked
+    const allItems = secEl.querySelectorAll('.todo-item');
+    const allDone = secEl.querySelectorAll('.todo-item.done, .todo-item.completed-flight');
+    secEl.querySelector('.section-count').textContent = `${allDone.length}/${allItems.length}`;
+  }
+
+  updateProgress();
+  saveState(state);
+  // also save locally as fallback
+  try{ localStorage.setItem('todo-state', JSON.stringify(state)); }catch(e){}
+}
+
+function updateProgress() {
+  const allItems = SECTIONS.flatMap(s => s.items);
+  const total = allItems.length;
+  const done = allItems.filter(it => state[it.id]).length;
+  document.getElementById('progress-count').textContent = `${done} / ${total}`;
+  document.getElementById('progress-fill').style.width = `${(done/total)*100}%`;
+}
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+  if(!confirm('Reset all non-flight items?')) return;
+  // Keep locked items
+  const fresh = {};
+  SECTIONS.forEach(sec => sec.items.forEach(it => { if(it.locked) fresh[it.id]=true; }));
+  state = fresh;
+  saveState(state);
+  try{ localStorage.setItem('todo-state', JSON.stringify(state)); }catch(e){}
+  render(state);
+});
+
+// ── INIT ──
+async function init() {
+  let savedState = {};
+  // Try persistent storage first, fallback to localStorage
+  try {
+    savedState = await loadState();
+    if(!savedState || Object.keys(savedState).length === 0) {
+      savedState = loadLocalState();
+    }
+  } catch(e) {
+    savedState = loadLocalState();
+  }
+  render(savedState);
+}
+
+init();
+</script>
+</body>
+</html>
